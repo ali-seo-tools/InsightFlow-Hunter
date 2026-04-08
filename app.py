@@ -1,24 +1,41 @@
 import streamlit as st
+import asyncio
+from insight_hunter import universal_power_hunter
 
 # --- PAGE CONFIG ---
-st.set_page_config(page_title="Insight Flow Dashboard", layout="wide")
+st.set_page_config(page_title="InsightFlow Global Auditor", layout="wide")
 
-# --- MAIN UI ---
-st.title("🚀 Insight Flow - Lead Hunter & Auditor")
-st.subheader("Welcome Hafiz! Your Cloud Agency is Live.")
+st.title("🌐 Worldwide Lead Discovery & Tracking Audit")
+st.subheader("Welcome Hafiz! Your Global Agency is Live.")
 
-st.sidebar.header("Targeting")
-niche = st.sidebar.text_input("Niche", "Real Estate")
-limit = st.sidebar.slider("Daily Limit", 10, 100, 50)
+# --- SIDEBAR OPTIONS ---
+st.sidebar.header("Targeting Parameters")
+category = st.sidebar.selectbox(
+    "Select Industry:",
+    ["Real Estate", "Law Firms", "Medical Spa", "Roofing Contractors", "Dental Clinics", "E-commerce", "Custom Niche"]
+)
 
-if st.button("🔥 Run Hunter"):
-    st.info(f"Scanning for {niche} leads...")
-    st.success("Bot is running in the cloud! No laptop space needed.")
+if category == "Custom Niche":
+    niche_to_search = st.sidebar.text_input("Enter Industry Name:")
+else:
+    niche_to_search = category
 
-# Performance Stats
-col1, col2 = st.columns(2)
-col1.metric("Leads Found", "0")
-col2.metric("Emails Sent", "0")
+location = st.sidebar.text_input("Target Location (e.g., USA, UK, Dubai):", "USA")
+scan_limit = st.sidebar.slider("Number of leads to scan", 5, 50, 10)
 
-st.markdown("---")
-st.write("Current Status: System Integrated with Gmail ✅")
+# --- MAIN ACTION ---
+if st.sidebar.button("🚀 Start Global Scan"):
+    if not niche_to_search:
+        st.error("Please enter a niche.")
+    else:
+        st.info(f"Scanning the web for {niche_to_search} in {location}...")
+        
+        # Calling the Python Brain
+        with st.spinner("Analyzing websites..."):
+            results = asyncio.run(universal_power_hunter(niche_to_search, location, scan_limit))
+            
+            if results:
+                st.success(f"Scan Complete! Found {len(results)} leads.")
+                st.table(results) # Asli Audit Report dikhaye ga
+            else:
+                st.warning("No leads found. Try different keywords.")
